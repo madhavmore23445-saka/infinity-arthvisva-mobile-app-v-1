@@ -18,7 +18,7 @@ export const signup = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { email, password, name } = req.body;
+    const { email, password, name , phone , rmcode } = req.body;
 
     try {
         const userExists = await User.findOne({ email });
@@ -30,6 +30,8 @@ export const signup = async (req, res) => {
         const user = await User.create({
             name,
             email,
+            phone,
+            rmcode,
             password,
         });
 
@@ -38,6 +40,8 @@ export const signup = async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
+                phone:user.phone,
+                rmcode:user.rmcode,
                 token: generateToken(user._id.toString()),
             });
         } else {

@@ -57,9 +57,9 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const signup = async (name, email, password) => {
+    const signup = async (name, email, password , phone , rmcode) => {
         try {
-            const response = await axios.post(`${API_URL}/auth/signup`, { name, email, password });
+            const response = await axios.post(`${API_URL}/auth/signup`, { name, email, password , phone , rmcode});
             const { token, ...userData } = response.data;
 
             await AsyncStorage.setItem('userToken', token);

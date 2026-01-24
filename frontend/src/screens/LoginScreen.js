@@ -1,65 +1,205 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Dimensions } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import theme from '../constants/theme';
 
+const { width } = Dimensions.get('window');
+
 const LoginScreen = ({ navigation }) => {
+    const [loginMethod, setLoginMethod] = useState('otp'); // 'otp' or 'password'
+    const [showOTPInput, setShowOTPInput] = useState(false);
+
+    // Form States
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [otp, setOtp] = useState('');
+
     const [error, setError] = useState('');
     const { login } = useAuth();
 
     const handleLogin = async () => {
-        if (!email || !password) {
-            setError('Please fill in all fields');
-            return;
-        }
-        const result = await login(email, password);
-        if (!result.success) {
-            setError(result.message);
+        if (loginMethod === 'password') {
+            if (!email || !password) {
+                setError('Please fill in all fields');
+                return;
+            }
+            const result = await login(email, password);
+            if (!result.success) {
+                setError(result.message);
+            }
+        } else {
+            // OTP Login Flow
+            if (!showOTPInput) {
+                if (phoneNumber.length !== 10) {
+                    setError('Please enter a valid 10-digit phone number');
+                    return;
+                }
+                setError('');
+                setShowOTPInput(true);
+            } else {
+                if (otp.length !== 6) {
+                    setError('Please enter a 6-digit OTP');
+                    return;
+                }
+                // Future API integration
+                console.log('Logging in with OTP:', phoneNumber, otp);
+            }
         }
     };
+
+    const renderTabSwitcher = () => (
+        <View style={styles.tabContainer}>
+            <TouchableOpacity
+                style={[styles.tab, loginMethod === 'otp' && styles.activeTab]}
+                onPress={() => {
+                    setLoginMethod('otp');
+                    setError('');
+                }}
+            >
+                <Ionicons
+                    name="phone-portrait-outline"
+                    size={20}
+                    color={loginMethod === 'otp' ? theme.colors.tabTextActive : theme.colors.tabTextInactive}
+                />
+                <Text style={[styles.tabText, loginMethod === 'otp' && styles.activeTabText]}>With OTP</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                style={[styles.tab, loginMethod === 'password' && styles.activeTab]}
+                onPress={() => {
+                    setLoginMethod('password');
+                    setError('');
+                    setShowOTPInput(false);
+                }}
+            >
+                <Ionicons
+                    name="key-outline"
+                    size={20}
+                    color={loginMethod === 'password' ? theme.colors.tabTextActive : theme.colors.tabTextInactive}
+                />
+                <Text style={[styles.tabText, loginMethod === 'password' && styles.activeTabText]}>With Password</Text>
+            </TouchableOpacity>
+        </View>
+    );
+
+    const renderOTPFlow = () => (
+        <View style={styles.flowContainer}>
+            {!showOTPInput ? (
+                <View style={styles.inputContainer}>
+                    <Text style={styles.label}>Phone Number</Text>
+                    <View style={styles.inputWrapper}>
+                        <Ionicons name="call-outline" size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Enter 10-digit number"
+                            value={phoneNumber}
+                            onChangeText={setPhoneNumber}
+                            keyboardType="phone-pad"
+                            maxLength={10}
+                        />
+                    </View>
+                </View>
+            ) : (
+                <View style={styles.inputContainer}>
+                    <View style={styles.otpHeader}>
+                        <Text style={styles.label}>Enter 6-digit OTP</Text>
+                        <TouchableOpacity onPress={() => setShowOTPInput(false)}>
+                            <Text style={styles.changeText}>Change Number</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.otpContainer}>
+                        {[...Array(6)].map((_, index) => (
+                            <TextInput
+                                key={index}
+                                style={styles.otpBox}
+                                keyboardType="number-pad"
+                                maxLength={1}
+                                value={otp[index] || ''}
+                                onChangeText={(val) => {
+                                    if (val) {
+                                        const newOtp = otp + val;
+                                        if (newOtp.length <= 6) setOtp(newOtp);
+                                    } else {
+                                        setOtp(otp.slice(0, -1));
+                                    }
+                                }}
+                            />
+                        ))}
+                    </View>
+                </View>
+            )}
+
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                <Text style={styles.buttonText}>{!showOTPInput ? 'Get OTP' : 'Login'}</Text>
+                <Ionicons name="arrow-forward" size={20} color={theme.colors.white} style={styles.buttonIcon} />
+            </TouchableOpacity>
+        </View>
+    );
+
+    const renderPasswordFlow = () => (
+        <View style={styles.flowContainer}>
+            <View style={styles.inputContainer}>
+                <Text style={styles.label}>Email</Text>
+                <View style={styles.inputWrapper}>
+                    <Ionicons name="mail-outline" size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter your email"
+                        value={email}
+                        onChangeText={setEmail}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                    />
+                </View>
+            </View>
+
+            <View style={styles.inputContainer}>
+                <Text style={styles.label}>Password</Text>
+                <View style={styles.inputWrapper}>
+                    <Ionicons name="lock-closed-outline" size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter your password"
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry
+                    />
+                </View>
+            </View>
+
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+        </View>
+    );
 
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={styles.container}
         >
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 <View style={styles.header}>
+                    <View style={styles.iconContainer}>
+                        <MaterialCommunityIcons name="cellphone-check" size={40} color={theme.colors.primary} />
+                    </View>
                     <Text style={styles.title}>Welcome Back</Text>
-                    <Text style={styles.subtitle}>Sign in to continue</Text>
+                    <Text style={styles.subtitle}>Select your preferred login method.</Text>
                 </View>
 
+                {renderTabSwitcher()}
+
                 <View style={styles.form}>
-                    {error ? <Text style={styles.errorText}>{error}</Text> : null}
+                    {error ? (
+                        <View style={styles.errorContainer}>
+                            <Ionicons name="alert-circle" size={20} color={theme.colors.error} />
+                            <Text style={styles.errorText}>{error}</Text>
+                        </View>
+                    ) : null}
 
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Email</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Enter your email"
-                            value={email}
-                            onChangeText={setEmail}
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                        />
-                    </View>
-
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Password</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Enter your password"
-                            value={password}
-                            onChangeText={setPassword}
-                            secureTextEntry
-                        />
-                    </View>
-
-                    <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                        <Text style={styles.buttonText}>Login</Text>
-                    </TouchableOpacity>
+                    {loginMethod === 'otp' ? renderOTPFlow() : renderPasswordFlow()}
 
                     <View style={styles.footer}>
                         <Text style={styles.footerText}>Don't have an account? </Text>
@@ -84,66 +224,162 @@ const styles = StyleSheet.create({
         padding: theme.spacing.lg,
     },
     header: {
-        marginBottom: theme.spacing.xxl,
+        alignItems: 'center',
+        marginBottom: theme.spacing.xl,
+    },
+    iconContainer: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: theme.colors.inactiveTab,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: theme.spacing.md,
     },
     title: {
         ...theme.typography.h1,
-        color: theme.colors.primary,
+        color: theme.colors.text,
+        textAlign: 'center',
     },
     subtitle: {
         ...theme.typography.body,
         color: theme.colors.textSecondary,
+        textAlign: 'center',
         marginTop: theme.spacing.xs,
+    },
+    tabContainer: {
+        flexDirection: 'row',
+        backgroundColor: theme.colors.inactiveTab,
+        borderRadius: theme.borderRadius.md,
+        padding: 4,
+        marginBottom: theme.spacing.xl,
+    },
+    tab: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        borderRadius: theme.borderRadius.sm,
+        gap: 8,
+    },
+    activeTab: {
+        backgroundColor: theme.colors.white,
+        ...theme.shadow,
+    },
+    tabText: {
+        ...theme.typography.caption,
+        color: theme.colors.tabTextInactive,
+        fontWeight: '600',
+    },
+    activeTabText: {
+        color: theme.colors.tabTextActive,
     },
     form: {
         width: '100%',
     },
+    flowContainer: {
+        width: '100%',
+    },
     inputContainer: {
-        marginBottom: theme.spacing.md,
+        marginBottom: theme.spacing.lg,
+    },
+    otpHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: theme.spacing.sm,
     },
     label: {
-        ...theme.typography.caption,
-        color: theme.colors.text,
+        ...theme.typography.label,
+        color: theme.colors.textSecondary,
         marginBottom: theme.spacing.xs,
+    },
+    changeText: {
+        ...theme.typography.caption,
+        color: theme.colors.primary,
         fontWeight: '600',
     },
-    input: {
-        backgroundColor: theme.colors.surface,
-        padding: theme.spacing.md,
-        borderRadius: theme.borderRadius.md,
+    inputWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: theme.colors.white,
         borderWidth: 1,
         borderColor: theme.colors.border,
+        borderRadius: theme.borderRadius.md,
+        paddingHorizontal: theme.spacing.md,
+    },
+    inputIcon: {
+        marginRight: theme.spacing.sm,
+    },
+    input: {
+        flex: 1,
+        paddingVertical: theme.spacing.md,
         fontSize: 16,
+        color: theme.colors.text,
+    },
+    otpContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: theme.spacing.sm,
+    },
+    otpBox: {
+        width: (width - theme.spacing.lg * 2 - 50) / 6,
+        height: 50,
+        backgroundColor: theme.colors.white,
+        borderWidth: 1,
+        borderColor: theme.colors.border,
+        borderRadius: theme.borderRadius.sm,
+        textAlign: 'center',
+        fontSize: 20,
+        fontWeight: '700',
+        color: theme.colors.primary,
     },
     button: {
         backgroundColor: theme.colors.primary,
+        flexDirection: 'row',
         padding: theme.spacing.md,
         borderRadius: theme.borderRadius.md,
         alignItems: 'center',
-        marginTop: theme.spacing.lg,
+        justifyContent: 'center',
+        marginTop: theme.spacing.md,
         ...theme.shadow,
     },
     buttonText: {
         color: theme.colors.white,
         fontSize: 18,
-        fontWeight: 'bold',
+        fontWeight: '700',
+    },
+    buttonIcon: {
+        marginLeft: theme.spacing.sm,
+    },
+    errorContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#FEE2E2',
+        padding: theme.spacing.sm,
+        borderRadius: theme.borderRadius.sm,
+        marginBottom: theme.spacing.md,
+        gap: 8,
     },
     errorText: {
         color: theme.colors.error,
-        marginBottom: theme.spacing.md,
-        textAlign: 'center',
+        fontSize: 14,
+        fontWeight: '500',
     },
     footer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: theme.spacing.xl,
+        marginTop: theme.spacing.xxl,
     },
     footerText: {
         color: theme.colors.textSecondary,
+        fontSize: 15,
     },
     linkText: {
         color: theme.colors.primary,
-        fontWeight: 'bold',
+        fontWeight: '700',
+        fontSize: 15,
     },
 });
 

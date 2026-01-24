@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { View, ActivityIndicator } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import AuthStack from './AuthStack';
-import AppTabs from './AppTabs';
+import DrawerNavigator from './DrawerNavigator';
 import theme from '../constants/theme';
 
 const RootNavigator = () => {
@@ -19,7 +19,7 @@ const RootNavigator = () => {
 
     return (
         <NavigationContainer>
-            {token ? <AppTabs /> : <AuthStack />}
+            {token ? <DrawerNavigator /> : <AuthStack />}
         </NavigationContainer>
     );
 };

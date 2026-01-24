@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import theme from '../constants/theme';
 
-const KnowledgeScreen = () => {
+const EventScreen = () => {
     return (
         <ScrollView style={styles.container}>
             <View style={styles.header}>
@@ -51,4 +51,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default KnowledgeScreen;
+export default EventScreen;
