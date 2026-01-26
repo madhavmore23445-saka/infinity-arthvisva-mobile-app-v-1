@@ -1,25 +1,55 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { ScreenWrapper, InfoCard, ActionButton, styles } from '../../components/common/SubsectionUI';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import theme from '../../constants/theme';
 
 const CarLoanScreen = () => (
-    <ScreenWrapper title="Car Loan">
-        <InfoCard
-            title="Express Car Loan"
-            subtitle="Zero processing fee for elite clients"
-            icon="car-outline"
-            value="9.25% p.a."
-            color="#FF6B6B"
-        />
-        <View style={styles.featureList}>
-            <Text style={styles.sectionTitle}>Required Documents</Text>
-            <Text style={styles.featureItem}>• Last 6 months Bank Statement</Text>
-            <Text style={styles.featureItem}>• 3 months Salary Slips</Text>
-            <Text style={styles.featureItem}>• Address & ID Proof</Text>
+
+    <ScrollView style={styles.container}>
+        <View style={styles.header}>
+            <Text style={styles.title}>car loan</Text>
+            <Text style={styles.subtitle}>Welcome to your client portfolio</Text>
         </View>
-        <ActionButton label="Check Eligibility" icon="checkmark-circle-outline" />
-    </ScreenWrapper>
+        <View style={styles.card}>
+            <Text style={styles.cardTitle}>products------car loan</Text>
+            <Text style={styles.cardBody}>No recent activity found.</Text>
+        </View>
+    </ScrollView>
+
 );
+
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        padding: theme.spacing.lg,
+    },
+    header: {
+        marginTop: theme.spacing.xl,
+        marginBottom: theme.spacing.xl,
+    },
+    title: {
+        ...theme.typography.h1,
+        color: theme.colors.text,
+    },
+    subtitle: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    },
+    card: {
+        backgroundColor: theme.colors.surface,
+        padding: theme.spacing.lg,
+        borderRadius: theme.borderRadius.lg,
+        ...theme.shadow,
+    },
+    cardTitle: {
+        ...theme.typography.h3,
+        marginBottom: theme.spacing.sm,
+    },
+    cardBody: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    }
+});
 
 export default CarLoanScreen;

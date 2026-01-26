@@ -1,14 +1,55 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { ScreenWrapper, InfoCard, styles } from '../../components/common/SubsectionUI';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import theme from '../../constants/theme';
 
 const ClientPortfolioScreen = () => (
-    <ScreenWrapper title="Client Portfolio">
-        <InfoCard title="Total Clients" value="45" icon="people-circle-outline" color={theme.colors.primary} />
-        <Text style={styles.sectionTitle}>Recent Onboarding</Text>
-        <Text style={styles.emptyText}>Rahul Sharma joined yesterday.</Text>
-    </ScreenWrapper>
+    <ScrollView style={styles.container}>
+        <View style={styles.header}>
+            <Text style={styles.title}>Client portfolio</Text>
+            <Text style={styles.subtitle}>Welcome to your client portfolio</Text>
+        </View>
+        <View style={styles.card}>
+            <Text style={styles.cardTitle}>secondary------ Client porfolio</Text>
+            <Text style={styles.cardBody}>No recent activity found.</Text>
+        </View>
+    </ScrollView>
+
 );
+
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        padding: theme.spacing.lg,
+    },
+    header: {
+        marginTop: theme.spacing.xl,
+        marginBottom: theme.spacing.xl,
+    },
+    title: {
+        ...theme.typography.h1,
+        color: theme.colors.text,
+    },
+    subtitle: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    },
+    card: {
+        backgroundColor: theme.colors.surface,
+        padding: theme.spacing.lg,
+        borderRadius: theme.borderRadius.lg,
+        ...theme.shadow,
+    },
+    cardTitle: {
+        ...theme.typography.h3,
+        marginBottom: theme.spacing.sm,
+    },
+    cardBody: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    }
+});
+
 
 export default ClientPortfolioScreen;

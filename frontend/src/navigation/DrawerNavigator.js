@@ -3,6 +3,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import AppTabs from './AppTabs';
 import CustomDrawerContent from '../components/CustomDrawerContent';
 import ProfileScreen from '../screens/ProfileScreen';
+import BackButton from '../components/common/BackButton';
 // Products
 import HomeLoanScreen from '../screens/products/HomeLoanScreen';
 import CarLoanScreen from '../screens/products/CarLoanScreen';
@@ -47,30 +48,113 @@ const DrawerNavigator = () => {
             <Drawer.Screen
                 name="MainTabs"
                 component={AppTabs}
-                options={{ title: 'Home' }}
+                options={{
+                    title: 'Home',
+                    headerTitle: 'Infinity Arhvisva'
+                }}
             />
             <Drawer.Screen
                 name="Profile"
                 component={ProfileScreen}
-                options={{ title: 'My Profile' }}
+                options={{
+                    title: 'My Profile',
+                    headerLeft: () => <BackButton />
+                }}
             />
 
             {/* Products */}
-            <Drawer.Screen name="HomeLoan" component={HomeLoanScreen} options={{ title: 'Home Loan' }} />
-            <Drawer.Screen name="CarLoan" component={CarLoanScreen} options={{ title: 'Car Loan' }} />
-            <Drawer.Screen name="Insurance" component={InsuranceScreen} options={{ title: 'Insurance' }} />
-            <Drawer.Screen name="MutualFund" component={MutualFundScreen} options={{ title: 'Mutual Fund' }} />
-            <Drawer.Screen name="Investment" component={InvestmentScreen} options={{ title: 'Investment' }} />
+            <Drawer.Screen
+                name="HomeLoan"
+                component={HomeLoanScreen}
+                options={{
+                    title: 'Home Loan',
+                    headerLeft: () => <BackButton />
+                }}
+            />
+            <Drawer.Screen
+                name="CarLoan"
+                component={CarLoanScreen}
+                options={{
+                    title: 'Car Loan',
+                    headerLeft: () => <BackButton />
+                }}
+            />
+            <Drawer.Screen
+                name="Insurance"
+                component={InsuranceScreen}
+                options={{
+                    title: 'Insurance',
+                    headerLeft: () => <BackButton />
+                }}
+            />
+            <Drawer.Screen
+                name="MutualFund"
+                component={MutualFundScreen}
+                options={{
+                    title: 'Mutual Fund',
+                    headerLeft: () => <BackButton />
+                }}
+            />
+            <Drawer.Screen
+                name="Investment"
+                component={InvestmentScreen}
+                options={{
+                    title: 'Investment',
+                    headerLeft: () => <BackButton />
+                }}
+            />
 
             {/* Primary */}
-            <Drawer.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Dashboard' }} />
-            <Drawer.Screen name="LeadManagement" component={LeadManagementScreen} options={{ title: 'Lead Management' }} />
+            <Drawer.Screen
+                name="Dashboard"
+                component={DashboardScreen}
+                options={{
+                    title: 'Dashboard',
+                    headerLeft: () => <BackButton />
+                }}
+            />
+            <Drawer.Screen
+                name="LeadManagement"
+                component={LeadManagementScreen}
+                options={{
+                    title: 'Lead Management',
+                    headerLeft: () => <BackButton />
+                }}
+            />
 
             {/* Secondary */}
-            <Drawer.Screen name="ClientPortfolio" component={ClientPortfolioScreen} options={{ title: 'Client Portfolio' }} />
-            <Drawer.Screen name="Incentives" component={IncentivesScreen} options={{ title: 'Incentives & Payouts' }} />
-            <Drawer.Screen name="Marketing" component={MarketingScreen} options={{ title: 'Marketing Campaign' }} />
-            <Drawer.Screen name="Downloads" component={DownloadsScreen} options={{ title: 'Downloads' }} />
+            <Drawer.Screen
+                name="ClientPortfolio"
+                component={ClientPortfolioScreen}
+                options={{
+                    title: 'Client Portfolio',
+                    headerLeft: () => <BackButton />
+                }}
+            />
+            <Drawer.Screen
+                name="Incentives"
+                component={IncentivesScreen}
+                options={{
+                    title: 'Incentives & Payouts',
+                    headerLeft: () => <BackButton />
+                }}
+            />
+            <Drawer.Screen
+                name="Marketing"
+                component={MarketingScreen}
+                options={{
+                    title: 'Marketing Campaign',
+                    headerLeft: () => <BackButton />
+                }}
+            />
+            <Drawer.Screen
+                name="Downloads"
+                component={DownloadsScreen}
+                options={{
+                    title: 'Downloads',
+                    headerLeft: () => <BackButton />
+                }}
+            />
         </Drawer.Navigator>
     );
 };

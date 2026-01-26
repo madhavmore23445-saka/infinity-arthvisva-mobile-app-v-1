@@ -1,17 +1,54 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { ScreenWrapper, InfoCard, styles } from '../../components/common/SubsectionUI';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import theme from '../../constants/theme';
 
 const MarketingScreen = () => (
-    <ScreenWrapper title="Marketing Campaign">
-        <InfoCard title="Active Campaigns" value="3" icon="megaphone-outline" color="#FF6B6B" />
-        <View style={styles.featureList}>
-            <Text style={styles.sectionTitle}>Current Reach</Text>
-            <Text style={styles.featureItem}>• Facebook Ads: 4.5k Reach</Text>
-            <Text style={styles.featureItem}>• Email Blast: 1.2k Opened</Text>
+    <ScrollView style={styles.container}>
+        <View style={styles.header}>
+            <Text style={styles.title}>Marketing and campagin portfolio</Text>
+            <Text style={styles.subtitle}>Welcome to your client portfolio</Text>
         </View>
-    </ScreenWrapper>
+        <View style={styles.card}>
+            <Text style={styles.cardTitle}>secondary------Marketing campaign</Text>
+            <Text style={styles.cardBody}>No recent activity found.</Text>
+        </View>
+    </ScrollView>
 );
+
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        padding: theme.spacing.lg,
+    },
+    header: {
+        marginTop: theme.spacing.xl,
+        marginBottom: theme.spacing.xl,
+    },
+    title: {
+        ...theme.typography.h1,
+        color: theme.colors.text,
+    },
+    subtitle: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    },
+    card: {
+        backgroundColor: theme.colors.surface,
+        padding: theme.spacing.lg,
+        borderRadius: theme.borderRadius.lg,
+        ...theme.shadow,
+    },
+    cardTitle: {
+        ...theme.typography.h3,
+        marginBottom: theme.spacing.sm,
+    },
+    cardBody: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    }
+});
+
 
 export default MarketingScreen;

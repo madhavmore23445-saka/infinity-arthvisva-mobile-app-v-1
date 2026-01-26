@@ -1,16 +1,52 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { ScreenWrapper, InfoCard, styles } from '../../components/common/SubsectionUI';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import theme from '../../constants/theme';
 
 const InvestmentScreen = () => (
-    <ScreenWrapper title="Investment">
-        <InfoCard title="Portfolio Growth" subtitle="Cumulative earnings" icon="wallet-outline" value="₹ 12,50,000" color={theme.colors.primary} />
-        <View style={styles.grid}>
-            <InfoCard title="Gold" subtitle="Safe haven" icon="medal-outline" color="#F7B731" />
-            <InfoCard title="Stocks" subtitle="High yield" icon="bar-chart-outline" color="#4B7BEC" />
+    <ScrollView style={styles.container}>
+        <View style={styles.header}>
+            <Text style={styles.title}>Investment </Text>
+            <Text style={styles.subtitle}>Welcome to your client portfolio</Text>
         </View>
-    </ScreenWrapper>
+        <View style={styles.card}>
+            <Text style={styles.cardTitle}>products------investment</Text>
+            <Text style={styles.cardBody}>No recent activity found.</Text>
+        </View>
+    </ScrollView>
 );
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        padding: theme.spacing.lg,
+    },
+    header: {
+        marginTop: theme.spacing.xl,
+        marginBottom: theme.spacing.xl,
+    },
+    title: {
+        ...theme.typography.h1,
+        color: theme.colors.text,
+    },
+    subtitle: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    },
+    card: {
+        backgroundColor: theme.colors.surface,
+        padding: theme.spacing.lg,
+        borderRadius: theme.borderRadius.lg,
+        ...theme.shadow,
+    },
+    cardTitle: {
+        ...theme.typography.h3,
+        marginBottom: theme.spacing.sm,
+    },
+    cardBody: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    }
+});
 
 export default InvestmentScreen;

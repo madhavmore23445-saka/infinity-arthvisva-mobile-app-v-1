@@ -1,18 +1,54 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { ScreenWrapper, InfoCard, ActionButton, styles } from '../../components/common/SubsectionUI';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import theme from '../../constants/theme';
 
 const MutualFundScreen = () => (
-    <ScreenWrapper title="Mutual Fund">
-        <InfoCard title="Top Performing" subtitle="Large Cap Fund" icon="stats-chart-outline" value="+18.4%" color="#20BF6B" />
-        <View style={styles.featureList}>
-            <Text style={styles.sectionTitle}>Investment Modes</Text>
-            <Text style={styles.featureItem}>• Systematic Investment Plan (SIP)</Text>
-            <Text style={styles.featureItem}>• Lumpsum Investment</Text>
+    <ScrollView style={styles.container}>
+        <View style={styles.header}>
+            <Text style={styles.title}>mutual funds</Text>
+            <Text style={styles.subtitle}>Welcome to your client portfolio</Text>
         </View>
-        <ActionButton label="Start a SIP" icon="trending-up" />
-    </ScreenWrapper>
+        <View style={styles.card}>
+            <Text style={styles.cardTitle}>products------mutual funds</Text>
+            <Text style={styles.cardBody}>No recent activity found.</Text>
+        </View>
+    </ScrollView>
+
 );
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        padding: theme.spacing.lg,
+    },
+    header: {
+        marginTop: theme.spacing.xl,
+        marginBottom: theme.spacing.xl,
+    },
+    title: {
+        ...theme.typography.h1,
+        color: theme.colors.text,
+    },
+    subtitle: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    },
+    card: {
+        backgroundColor: theme.colors.surface,
+        padding: theme.spacing.lg,
+        borderRadius: theme.borderRadius.lg,
+        ...theme.shadow,
+    },
+    cardTitle: {
+        ...theme.typography.h3,
+        marginBottom: theme.spacing.sm,
+    },
+    cardBody: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    }
+});
+
 
 export default MutualFundScreen;

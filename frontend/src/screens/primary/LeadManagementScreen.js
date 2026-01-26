@@ -1,21 +1,53 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { ScreenWrapper, ActionButton, styles } from '../../components/common/SubsectionUI';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import theme from '../../constants/theme';
 
 const LeadManagementScreen = () => (
-    <ScreenWrapper title="Lead Management">
-        <Text style={styles.sectionTitle}>Active Leads</Text>
-        <View style={styles.leadCard}>
-            <Text style={styles.leadName}>Madhav More</Text>
-            <Text style={styles.leadInfo}>Product: Home Loan | Status: In-Progress</Text>
-        </View>
-        <View style={styles.leadCard}>
-            <Text style={styles.leadName}>Angad Agrawal</Text>
-            <Text style={styles.leadInfo}>Product: Mutual Fund | Status: Follow-up</Text>
-        </View>
-        <ActionButton label="Generate New Lead" icon="person-add-outline" />
-    </ScreenWrapper>
+        <ScrollView style={styles.container}>
+            <View style={styles.header}>
+                <Text style={styles.title}>Lead management</Text>
+                <Text style={styles.subtitle}>Welcome to your dashboard</Text>
+            </View>
+            <View style={styles.card}>
+                <Text style={styles.cardTitle}>primay------ lead management</Text>
+                <Text style={styles.cardBody}>No recent activity found.</Text>
+            </View>
+        </ScrollView>
+
 );
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        padding: theme.spacing.lg,
+    },
+    header: {
+        marginTop: theme.spacing.xl,
+        marginBottom: theme.spacing.xl,
+    },
+    title: {
+        ...theme.typography.h1,
+        color: theme.colors.text,
+    },
+    subtitle: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    },
+    card: {
+        backgroundColor: theme.colors.surface,
+        padding: theme.spacing.lg,
+        borderRadius: theme.borderRadius.lg,
+        ...theme.shadow,
+    },
+    cardTitle: {
+        ...theme.typography.h3,
+        marginBottom: theme.spacing.sm,
+    },
+    cardBody: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    }
+});
 
 export default LeadManagementScreen;

@@ -1,20 +1,55 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { ScreenWrapper, InfoCard, styles } from '../../components/common/SubsectionUI';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import theme from '../../constants/theme';
 
 const DashboardScreen = () => (
-    <ScreenWrapper title="Dashboard">
-        <View style={styles.grid}>
-            <InfoCard title="Total Leads" value="128" icon="people-outline" color={theme.colors.primary} />
-            <InfoCard title="Revenue" value="₹ 4.2L" icon="cash-outline" color="#20BF6B" />
+    <ScrollView style={styles.container}>
+        <View style={styles.header}>
+            <Text style={styles.title}>Dashboard</Text>
+            <Text style={styles.subtitle}>Welcome to your dashboard</Text>
         </View>
-        <Text style={styles.sectionTitle}>Monthly Target</Text>
-        <View style={styles.progressBarBg}>
-            <View style={[styles.progressBarFill, { width: '65%' }]} />
+        <View style={styles.card}>
+            <Text style={styles.cardTitle}>primay------ dashboard</Text>
+            <Text style={styles.cardBody}>No recent activity found.</Text>
         </View>
-        <Text style={styles.progressText}>65% of monthly target achieved</Text>
-    </ScreenWrapper>
+    </ScrollView>
+
 );
+
+
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        padding: theme.spacing.lg,
+    },
+    header: {
+        marginTop: theme.spacing.xl,
+        marginBottom: theme.spacing.xl,
+    },
+    title: {
+        ...theme.typography.h1,
+        color: theme.colors.text,
+    },
+    subtitle: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    },
+    card: {
+        backgroundColor: theme.colors.surface,
+        padding: theme.spacing.lg,
+        borderRadius: theme.borderRadius.lg,
+        ...theme.shadow,
+    },
+    cardTitle: {
+        ...theme.typography.h3,
+        marginBottom: theme.spacing.sm,
+    },
+    cardBody: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    }
+});
 
 export default DashboardScreen;

@@ -1,25 +1,54 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { ScreenWrapper, InfoCard, ActionButton, styles } from '../../components/common/SubsectionUI';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import theme from '../../constants/theme';
 
 const HomeLoanScreen = () => (
-    <ScreenWrapper title="Home Loan">
-        <InfoCard
-            title="Current Interest Rate"
-            subtitle="Starting from yearly basis"
-            icon="home-outline"
-            value="8.50% p.a."
-            color={theme.colors.primary}
-        />
-        <View style={styles.featureList}>
-            <Text style={styles.sectionTitle}>Key Benefits</Text>
-            <Text style={styles.featureItem}>• Low Processing Fees</Text>
-            <Text style={styles.featureItem}>• Flexible Tenure up to 30 Years</Text>
-            <Text style={styles.featureItem}>• Quick Approval Process</Text>
+    <ScrollView style={styles.container}>
+        <View style={styles.header}>
+            <Text style={styles.title}>Home loan</Text>
+            <Text style={styles.subtitle}>Welcome to your client portfolio</Text>
         </View>
-        <ActionButton label="Apply for Home Loan" icon="add-circle-outline" />
-    </ScreenWrapper>
+        <View style={styles.card}>
+            <Text style={styles.cardTitle}>products  ------home loan</Text>
+            <Text style={styles.cardBody}>No recent activity found.</Text>
+        </View>
+    </ScrollView>
 );
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        padding: theme.spacing.lg,
+    },
+    header: {
+        marginTop: theme.spacing.xl,
+        marginBottom: theme.spacing.xl,
+    },
+    title: {
+        ...theme.typography.h1,
+        color: theme.colors.text,
+    },
+    subtitle: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    },
+    card: {
+        backgroundColor: theme.colors.surface,
+        padding: theme.spacing.lg,
+        borderRadius: theme.borderRadius.lg,
+        ...theme.shadow,
+    },
+    cardTitle: {
+        ...theme.typography.h3,
+        marginBottom: theme.spacing.sm,
+    },
+    cardBody: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    }
+});
+
+
 
 export default HomeLoanScreen;

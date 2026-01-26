@@ -1,18 +1,56 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { ScreenWrapper, InfoCard, styles } from '../../components/common/SubsectionUI';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import theme from '../../constants/theme';
 
 const InsuranceScreen = () => (
-    <ScreenWrapper title="Insurance">
-        <View style={styles.grid}>
-            <InfoCard title="Health" subtitle="Family Floater" icon="heart-outline" color="#20BF6B" />
-            <InfoCard title="Life" subtitle="Term Insurance" icon="person-outline" color="#4B7BEC" />
-            <InfoCard title="Motor" subtitle="Third Party" icon="car-sport-outline" color="#F7B731" />
+    <ScrollView style={styles.container}>
+        <View style={styles.header}>
+            <Text style={styles.title}>insurance</Text>
+            <Text style={styles.subtitle}>Welcome to your client portfolio</Text>
         </View>
-        <Text style={styles.sectionTitle}>Recent Policies</Text>
-        <Text style={styles.emptyText}>No active policies found.</Text>
-    </ScreenWrapper>
+        <View style={styles.card}>
+            <Text style={styles.cardTitle}>products------insurance</Text>
+            <Text style={styles.cardBody}>No recent activity found.</Text>
+        </View>
+    </ScrollView>
+
 );
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        padding: theme.spacing.lg,
+    },
+    header: {
+        marginTop: theme.spacing.xl,
+        marginBottom: theme.spacing.xl,
+    },
+    title: {
+        ...theme.typography.h1,
+        color: theme.colors.text,
+    },
+    subtitle: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    },
+    card: {
+        backgroundColor: theme.colors.surface,
+        padding: theme.spacing.lg,
+        borderRadius: theme.borderRadius.lg,
+        ...theme.shadow,
+    },
+    cardTitle: {
+        ...theme.typography.h3,
+        marginBottom: theme.spacing.sm,
+    },
+    cardBody: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+    }
+});
+
+
+
 
 export default InsuranceScreen;
