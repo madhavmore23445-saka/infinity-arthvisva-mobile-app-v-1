@@ -45,7 +45,9 @@ const CustomDrawerContent = (props) => {
             </View>
         </TouchableOpacity>
     );
+{/* <View>
 
+</View> */}
     const renderMenuItem = (label, icon, onPress, isSubItem = false, key) => (
         <TouchableOpacity
             key={key}
