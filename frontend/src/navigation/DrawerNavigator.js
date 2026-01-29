@@ -12,7 +12,7 @@ import MutualFundScreen from '../screens/products/MutualFundScreen';
 import InvestmentScreen from '../screens/products/InvestmentScreen';
 // Primary
 import DashboardScreen from '../screens/primary/DashboardScreen';
-import LeadManagementScreen from '../screens/primary/LeadManagementScreen';
+// import LeadManagementScreen from '../screens/primary/LeadManagementScreen';
 // Secondary
 import ClientPortfolioScreen from '../screens/secondary/ClientPortfolioScreen';
 import IncentivesScreen from '../screens/secondary/IncentivesScreen';
@@ -21,6 +21,7 @@ import DownloadsScreen from '../screens/secondary/DownloadsScreen';
 
 import theme from '../constants/theme';
 import TestScreen from '../screens/test/TestScreen';
+import LeadManagementScreen from '../screens/primary/dashboard/leadmanagement/LeadManagementScreen';
 
 const Drawer = createDrawerNavigator();
 

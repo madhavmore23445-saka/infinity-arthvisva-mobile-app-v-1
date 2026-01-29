@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useAuth } from '../context/AuthContext';
-import theme from '../constants/theme';
+import theme from '../../../constants/theme';
+import { useAuth } from '../../../context/AuthContext';
+// import { useAuth } from '../context/AuthContext';
+// import theme from '../constants/theme';
 
 const { width } = Dimensions.get('window');
 
@@ -21,6 +23,12 @@ const LoginScreen = ({ navigation }) => {
     const [successMessage, setSuccessMessage] = useState('');
     const [timer, setTimer] = useState(0);
     const { login, sendLoginOtp, loginWithOtp } = useAuth();
+
+    // password hide and show functionlity==================================================================>
+
+    const [showPassword, setShowPassword] = useState(false);
+
+
 
     // Timer Logic
     React.useEffect(() => {
@@ -171,7 +179,23 @@ const LoginScreen = ({ navigation }) => {
                             <Text style={styles.changeText}>Change Number</Text>
                         </TouchableOpacity>
                     </View>
-                    <View style={styles.otpContainer}>
+
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.label}>Enter OTP</Text>
+                        <View style={styles.inputWrapper}>
+                            <Ionicons name="key-outline" size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Enter 6-digit OTP"
+                                value={otp}
+                                onChangeText={setOtp}
+                                keyboardType="number-pad"
+                                maxLength={6}
+                                autoFocus
+                            />
+                        </View>
+                    </View>
+                    {/* <View style={styles.otpContainer}>
                         {[...Array(6)].map((_, index) => (
                             <TextInput
                                 key={index}
@@ -189,7 +213,7 @@ const LoginScreen = ({ navigation }) => {
                                 }}
                             />
                         ))}
-                    </View>
+                    </View> */}
                     <TouchableOpacity
                         style={styles.resendContainer}
                         onPress={handleResend}
@@ -222,12 +246,12 @@ const LoginScreen = ({ navigation }) => {
     const renderPasswordFlow = () => (
         <View style={styles.flowContainer}>
             <View style={styles.inputContainer}>
-                <Text style={styles.label}>Email</Text>
+                <Text style={styles.label}>Email or Phone</Text>
                 <View style={styles.inputWrapper}>
                     <Ionicons name="mail-outline" size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
                     <TextInput
                         style={styles.input}
-                        placeholder="Enter your email"
+                        placeholder="Enter your email or phone"
                         value={email}
                         onChangeText={setEmail}
                         keyboardType="email-address"
@@ -240,13 +264,34 @@ const LoginScreen = ({ navigation }) => {
                 <Text style={styles.label}>Password</Text>
                 <View style={styles.inputWrapper}>
                     <Ionicons name="lock-closed-outline" size={20} color={theme.colors.textSecondary} style={styles.inputIcon} />
+
+
+
                     <TextInput
                         style={styles.input}
                         placeholder="Enter your password"
                         value={password}
                         onChangeText={setPassword}
-                        secureTextEntry
+                        secureTextEntry={!showPassword}
                     />
+
+                    <TouchableOpacity
+
+                        onPress={() => setShowPassword(prev => !prev)}
+                        style={styles.eyeIcon}
+                        activeOpacity={0.7}
+
+                    >
+                        <Ionicons
+                            name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                            size={20}
+                            color={theme.colors.textSecondary}
+                        />
+
+                    </TouchableOpacity>
+
+
+
                 </View>
             </View>
 
@@ -413,6 +458,9 @@ const styles = StyleSheet.create({
         paddingVertical: theme.spacing.md,
         fontSize: 16,
         color: theme.colors.text,
+    },
+    eyeIcon: {
+        paddingBlock: 8
     },
     otpContainer: {
         flexDirection: 'row',

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useAuth } from '../context/AuthContext';
-import theme from '../constants/theme';
+import { useAuth } from '../../../context/AuthContext';
+import theme from '../../../constants/theme';
+// import { useAuth } from '../context/AuthContext';
+// import theme from '../constants/theme';
 
 const SignupScreen = ({ navigation }) => {
     // Registration fields
@@ -12,10 +14,10 @@ const SignupScreen = ({ navigation }) => {
     const [password, setPassword] = useState('');
     const [rm_referral, setRm_referral] = useState('');
     const [confirmpass, setConfirmpass] = useState('');
-    
+
     // OTP fields
     const [otp, setOtp] = useState('');
-    
+
     // UI State
     const [step, setStep] = useState(1); // 1 = Registration, 2 = OTP Verification, 3 = Final Registration
     const [loading, setLoading] = useState(false);
@@ -23,6 +25,10 @@ const SignupScreen = ({ navigation }) => {
     const [successMessage, setSuccessMessage] = useState('');
     const [timer, setTimer] = useState(0);
     const [userData, setUserData] = useState(null); // Store user data for final registration
+
+    // functionlaity to hide and show the password========================================>
+
+    const [showPassword, setShowPassword] = useState(false);
 
     const { signup, sendOtp, verifyOtp, completeRegistration, token } = useAuth();
 
@@ -46,7 +52,7 @@ const SignupScreen = ({ navigation }) => {
         if (token) {
             console.log('Token available, registration complete!');
             setSuccessMessage('Registration successful! Redirecting to app...');
-            
+
             // Reset form after delay
             setTimeout(() => {
                 resetForm();
@@ -173,9 +179,11 @@ const SignupScreen = ({ navigation }) => {
                             'Mobile Number Exists',
                             otpResult.message,
                             [
-                                { text: 'OK', onPress: () => {
-                                    navigation.navigate('Login');
-                                }}
+                                {
+                                    text: 'OK', onPress: () => {
+                                        navigation.navigate('Login');
+                                    }
+                                }
                             ]
                         );
                     } else {
@@ -220,7 +228,7 @@ const SignupScreen = ({ navigation }) => {
 
                 // OTP verification successful, get registerToken
                 const registerToken = result.registerToken;
-                
+
                 // STEP 4: Complete Registration with registerToken
                 console.log('Completing registration with register token...');
                 const finalResult = await completeRegistration(userData, registerToken);
@@ -338,8 +346,23 @@ const SignupScreen = ({ navigation }) => {
                         placeholder="Create a secure password"
                         value={password}
                         onChangeText={setPassword}
-                        secureTextEntry
+                        secureTextEntry={!showPassword}
                     />
+                    <TouchableOpacity
+                        onPress={() => setShowPassword(prev => !prev)}
+                        style={styles.eyeIcon}
+                        activeOpacity={0.7}
+
+
+                    >
+
+                        <Ionicons
+                            name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                            size={20}
+                            color={theme.colors.textSecondary}
+                        />
+
+                    </TouchableOpacity>
                 </View>
             </View>
 
@@ -352,8 +375,23 @@ const SignupScreen = ({ navigation }) => {
                         placeholder="Confirm your password"
                         value={confirmpass}
                         onChangeText={setConfirmpass}
-                        secureTextEntry
+                        secureTextEntry={!showPassword}
                     />
+                    <TouchableOpacity
+
+                        onPress={() => setShowPassword(prev => !prev)}
+                        style={styles.eyeIcon}
+                        activeOpacity={0.7}
+
+                    >
+                        <Ionicons
+                            name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                            size={20}
+                            color={theme.colors.textSecondary}
+                        />
+
+
+                    </TouchableOpacity>
                 </View>
             </View>
         </>
@@ -574,6 +612,9 @@ const styles = StyleSheet.create({
         paddingVertical: theme.spacing.md,
         fontSize: 16,
         color: theme.colors.text,
+    },
+    eyeIcon: {
+        paddingHorizontal: 8,
     },
     resendContainer: {
         alignSelf: 'flex-end',

@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import theme from '../constants/theme';
 
 const ProfileScreen = () => {
-    const { user, token } = useAuth();
+    const { user,logout, token } = useAuth();
     const [profileData, setProfileData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -122,8 +122,21 @@ const ProfileScreen = () => {
             </View>
 
             <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Account Settings</Text>
+                <Text style={styles.sectionTitle}>Account Settings</Text> 
                 <View style={styles.card}>
+
+                    {/* logout in profile */}
+                    <TouchableOpacity style={styles.settingItem} onPress={logout}>
+                        <Ionicons name="chevron-forward" size={22} color={theme.colors.primary} />
+                        <Text
+                            style={[styles.settingText, { color: theme.colors.primary }]}
+                        >
+                            Logout
+                        </Text>
+                        <Ionicons name="chevron-forward" size={20} color={theme.colors.primary} />
+                    </TouchableOpacity>
+
+
                     <TouchableOpacity style={styles.settingItem}>
                         <Ionicons name="notifications-outline" size={22} color={theme.colors.text} />
                         <Text style={styles.settingText}>Notifications</Text>
