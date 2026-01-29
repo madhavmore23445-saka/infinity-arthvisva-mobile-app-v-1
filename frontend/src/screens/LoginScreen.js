@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Dimensions } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import theme from '../constants/theme';
@@ -7,7 +7,7 @@ import theme from '../constants/theme';
 const { width } = Dimensions.get('window');
 
 const LoginScreen = ({ navigation }) => {
-    const [loginMethod, setLoginMethod] = useState('otp'); // 'otp' or 'password'
+    const [loginMethod, setLoginMethod] = useState('password'); // 'otp' or 'password'
     const [showOTPInput, setShowOTPInput] = useState(false);
 
     // Form States
@@ -17,35 +17,97 @@ const LoginScreen = ({ navigation }) => {
     const [otp, setOtp] = useState('');
 
     const [error, setError] = useState('');
-    const { login } = useAuth();
+    const [loading, setLoading] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [timer, setTimer] = useState(0);
+    const { login, sendLoginOtp, loginWithOtp } = useAuth();
+
+    // Timer Logic
+    React.useEffect(() => {
+        let interval;
+        if (timer > 0) {
+            interval = setInterval(() => {
+                setTimer((prev) => prev - 1);
+            }, 1000);
+        } else {
+            clearInterval(interval);
+        }
+        return () => clearInterval(interval);
+    }, [timer]);
+
+    const startTimer = () => setTimer(45);
 
     const handleLogin = async () => {
+        setError('');
+        setSuccessMessage('');
+
         if (loginMethod === 'password') {
             if (!email || !password) {
                 setError('Please fill in all fields');
                 return;
             }
+            setLoading(true);
             const result = await login(email, password);
+            setLoading(false);
             if (!result.success) {
                 setError(result.message);
             }
         } else {
             // OTP Login Flow
             if (!showOTPInput) {
-                if (phoneNumber.length !== 10) {
+                if (!phoneNumber || phoneNumber.length !== 10) {
                     setError('Please enter a valid 10-digit phone number');
                     return;
                 }
-                setError('');
-                setShowOTPInput(true);
+
+                setLoading(true);
+                const result = await sendLoginOtp(phoneNumber);
+                setLoading(false);
+
+                if (result.success) {
+                    setShowOTPInput(true);
+                    setSuccessMessage('OTP sent successfully');
+                    startTimer();
+                } else {
+                    setError(result.message);
+                }
             } else {
-                if (otp.length !== 6) {
+                if (!otp || otp.length !== 6) {
                     setError('Please enter a 6-digit OTP');
                     return;
                 }
-                // Future API integration
-                console.log('Logging in with OTP:', phoneNumber, otp);
+
+                setLoading(true);
+                const result = await loginWithOtp(phoneNumber, otp);
+                setLoading(false);
+
+                if (!result.success) {
+                    setError(result.message);
+                } else {
+                    setSuccessMessage('Login successful! Redirecting...');
+                }
             }
+        }
+    };
+
+    const handleResend = async () => {
+        if (!phoneNumber || phoneNumber.length !== 10) {
+            setError('Please enter a valid 10-digit phone number');
+            return;
+        }
+
+        setLoading(true);
+        setError('');
+        setSuccessMessage('');
+
+        const result = await sendLoginOtp(phoneNumber);
+        setLoading(false);
+
+        if (result.success) {
+            setSuccessMessage('OTP resent successfully');
+            startTimer();
+        } else {
+            setError(result.message);
         }
     };
 
@@ -128,12 +190,31 @@ const LoginScreen = ({ navigation }) => {
                             />
                         ))}
                     </View>
+                    <TouchableOpacity
+                        style={styles.resendContainer}
+                        onPress={handleResend}
+                        disabled={loading || timer > 0}
+                    >
+                        <Text style={[styles.resendText, (loading || timer > 0) && { color: theme.colors.disabled }]}>
+                            {timer > 0 ? `Resend OTP in ${timer}s` : 'Resend OTP'}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
             )}
 
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>{!showOTPInput ? 'Get OTP' : 'Login'}</Text>
-                <Ionicons name="arrow-forward" size={20} color={theme.colors.white} style={styles.buttonIcon} />
+            <TouchableOpacity
+                style={[styles.button, loading && styles.buttonDisabled]}
+                onPress={handleLogin}
+                disabled={loading}
+            >
+                {loading ? (
+                    <ActivityIndicator color={theme.colors.white} />
+                ) : (
+                    <>
+                        <Text style={styles.buttonText}>{!showOTPInput ? 'Get OTP' : 'Login'}</Text>
+                        <Ionicons name="arrow-forward" size={20} color={theme.colors.white} style={styles.buttonIcon} />
+                    </>
+                )}
             </TouchableOpacity>
         </View>
     );
@@ -169,8 +250,16 @@ const LoginScreen = ({ navigation }) => {
                 </View>
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Login</Text>
+            <TouchableOpacity
+                style={[styles.button, loading && styles.buttonDisabled]}
+                onPress={handleLogin}
+                disabled={loading}
+            >
+                {loading ? (
+                    <ActivityIndicator color={theme.colors.white} />
+                ) : (
+                    <Text style={styles.buttonText}>Login</Text>
+                )}
             </TouchableOpacity>
         </View>
     );
@@ -196,6 +285,13 @@ const LoginScreen = ({ navigation }) => {
                         <View style={styles.errorContainer}>
                             <Ionicons name="alert-circle" size={20} color={theme.colors.error} />
                             <Text style={styles.errorText}>{error}</Text>
+                        </View>
+                    ) : null}
+
+                    {successMessage ? (
+                        <View style={styles.successContainer}>
+                            <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+                            <Text style={styles.successText}>{successMessage}</Text>
                         </View>
                     ) : null}
 
@@ -367,10 +463,37 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '500',
     },
+    successContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#DCFCE7',
+        padding: theme.spacing.sm,
+        borderRadius: theme.borderRadius.sm,
+        marginBottom: theme.spacing.md,
+        gap: 8,
+    },
+    successText: {
+        color: theme.colors.success,
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    buttonDisabled: {
+        backgroundColor: theme.colors.disabled,
+        opacity: 0.7,
+    },
     footer: {
         flexDirection: 'row',
         justifyContent: 'center',
         marginTop: theme.spacing.xxl,
+    },
+    resendContainer: {
+        marginTop: theme.spacing.md,
+        alignItems: 'center',
+    },
+    resendText: {
+        color: theme.colors.primary,
+        fontWeight: '600',
+        fontSize: 14,
     },
     footerText: {
         color: theme.colors.textSecondary,

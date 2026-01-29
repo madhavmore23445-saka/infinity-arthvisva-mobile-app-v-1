@@ -35,17 +35,17 @@ const CustomDrawerContent = (props) => {
         >
             <View style={styles.profileInfo}>
                 <View style={styles.avatar}>
-                    <Text style={styles.avatarText}>{user?.name?.charAt(0) || 'M'}</Text>
+                    <Text style={styles.avatarText}>{user?.role?.charAt(0) || 'T'}</Text>
                 </View>
                 <View style={styles.nameContainer}>
-                    <Text style={styles.userName}>{user?.name || 'User Name'}</Text>
+                    <Text style={styles.userName}>{user?.adv_id || 'User Name'}</Text>
                     <Text style={styles.viewProfile}>View Profile</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color={theme.colors.white} />
             </View>
         </TouchableOpacity>
     );
-{/* <View>
+    {/* <View>
 
 </View> */}
     const renderMenuItem = (label, icon, onPress, isSubItem = false, key) => (
@@ -116,6 +116,10 @@ const CustomDrawerContent = (props) => {
         { label: 'Downloads', icon: 'download-outline', screen: 'Downloads' },
     ];
 
+    const testItems = [
+        { label: 'test', icon: 'briefcase-outline', screen: 'Test' },
+    ];
+
     return (
         <View style={{ flex: 1 }}>
             {renderHeader()}
@@ -123,6 +127,7 @@ const CustomDrawerContent = (props) => {
                 {renderCollapsibleSection('Products', 'cube-outline', 'products', productsItems)}
                 {renderCollapsibleSection('Primary', 'star-outline', 'primary', primaryItems)}
                 {renderCollapsibleSection('Secondary', 'options-outline', 'secondary', secondaryItems)}
+                {renderCollapsibleSection('Test', 'options-outline', 'test', testItems)}
             </DrawerContentScrollView>
 
             <TouchableOpacity style={styles.logoutButton} onPress={logout}>

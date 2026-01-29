@@ -1,11 +1,48 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import theme from '../constants/theme';
 
 const ProfileScreen = () => {
-    const { user } = useAuth();
+    const { user, token } = useAuth();
+    const [profileData, setProfileData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const [error, setError] = useState(null);
+
+    const fetchProfile = async () => {
+        try {
+            setError(null);
+            // The API_URL is defined in AuthContext, but we can use a relative or full URL if we know it.
+            // Based on AuthContext, it's https://api.infinityarthvishva.com/api
+            const API_URL = 'http://192.168.1.58:5000';
+            const response = await axios.get(`${API_URL}/api/dashboard/profile`);
+            console.log(response.data.user)
+
+            if (response.data && response.data.user) {
+                setProfileData(response.data.user);
+            } else {
+                setError('Failed to fetch profile data');
+            }
+        } catch (err) {
+            console.error('Error fetching profile:', err);
+            setError(err.response?.data?.message || 'Error connecting to server');
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchProfile();
+    }, []);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchProfile();
+    };
 
     const renderDetailItem = (icon, label, value) => (
         <View style={styles.detailItem}>
@@ -19,23 +56,68 @@ const ProfileScreen = () => {
         </View>
     );
 
+    if (loading && !refreshing) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={theme.colors.primary} />
+                <Text style={styles.loadingText}>Fetching profile...</Text>
+            </View>
+        );
+    }
+
+    if (error && !profileData) {
+        return (
+            <View style={styles.loadingContainer}>
+                <Ionicons name="alert-circle-outline" size={50} color={theme.colors.error} />
+                <Text style={styles.errorText}>{error}</Text>
+                <TouchableOpacity style={styles.retryButton} onPress={fetchProfile}>
+                    <Text style={styles.retryText}>Retry</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
+    // Use fetched data first, fallback to context user if necessary
+    const displayUser = profileData || user;
+
     return (
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <ScrollView
+            style={styles.container}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.colors.primary]} />
+            }
+        >
             <View style={styles.header}>
                 <View style={styles.avatarContainer}>
-                    <Text style={styles.avatarText}>{user?.name?.charAt(0) || 'U'}</Text>
+                    <Text style={styles.avatarText}>{displayUser?.name?.charAt(0) || 'U'}</Text>
                 </View>
-                <Text style={styles.userName}>{user?.name || 'User Name'}</Text>
-                <Text style={styles.userEmail}>{user?.email || 'user@example.com'}</Text>
+                <Text style={styles.userName}>{displayUser?.name || 'User Name'}</Text>
+                <Text style={styles.userEmail}>{displayUser?.email || 'user@example.com'}</Text>
+                {displayUser?.adv_id && (
+                    <View style={styles.idBadge}>
+                        <Text style={styles.idBadgeText}>{displayUser.adv_id}</Text>
+                    </View>
+                )}
             </View>
 
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Personal Information</Text>
                 <View style={styles.card}>
-                    {renderDetailItem('person-outline', 'Full Name', user?.name)}
-                    {renderDetailItem('mail-outline', 'Email Address', user?.email)}
-                    {renderDetailItem('call-outline', 'Phone Number', user?.phone)}
-                    {renderDetailItem('gift-outline', 'Referral Code', user?.rmcode)}
+                    {renderDetailItem('person-outline', 'Full Name', displayUser?.name)}
+                    {renderDetailItem('mail-outline', 'Email Address', displayUser?.email)}
+                    {renderDetailItem('call-outline', 'Phone Number', displayUser?.mobile || displayUser?.phone)}
+                    {renderDetailItem('card-outline', 'PAN Number', displayUser?.pan)}
+                    {renderDetailItem('location-outline', 'City', displayUser?.city)}
+                </View>
+            </View>
+
+            <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Professional Details</Text>
+                <View style={styles.card}>
+                    {renderDetailItem('briefcase-outline', 'Areas of Focus', displayUser?.head)}
+                    {renderDetailItem('options-outline', 'Categories', displayUser?.category)}
+                    {renderDetailItem('calendar-outline', 'Date Joined', displayUser?.date_joined ? new Date(displayUser.date_joined).toLocaleDateString() : 'N/A')}
                 </View>
             </View>
 
@@ -98,6 +180,18 @@ const styles = StyleSheet.create({
         color: theme.colors.textSecondary,
         marginTop: 4,
     },
+    idBadge: {
+        backgroundColor: theme.colors.inactiveTab,
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        borderRadius: 20,
+        marginTop: 8,
+    },
+    idBadgeText: {
+        color: theme.colors.primary,
+        fontSize: 12,
+        fontWeight: '700',
+    },
     section: {
         padding: theme.spacing.lg,
     },
@@ -153,6 +247,35 @@ const styles = StyleSheet.create({
         ...theme.typography.body,
         marginLeft: theme.spacing.md,
         color: theme.colors.text,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: theme.colors.background,
+    },
+    loadingText: {
+        marginTop: theme.spacing.md,
+        color: theme.colors.textSecondary,
+        ...theme.typography.body,
+    },
+    errorText: {
+        marginTop: theme.spacing.md,
+        color: theme.colors.error,
+        textAlign: 'center',
+        paddingHorizontal: theme.spacing.xl,
+        ...theme.typography.body,
+    },
+    retryButton: {
+        marginTop: theme.spacing.lg,
+        paddingHorizontal: theme.spacing.xl,
+        paddingVertical: theme.spacing.md,
+        backgroundColor: theme.colors.primary,
+        borderRadius: theme.borderRadius.md,
+    },
+    retryText: {
+        color: theme.colors.white,
+        fontWeight: '700',
     },
 });
 

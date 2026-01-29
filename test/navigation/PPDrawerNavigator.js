@@ -20,7 +20,6 @@ import MarketingScreen from '../screens/secondary/MarketingScreen';
 import DownloadsScreen from '../screens/secondary/DownloadsScreen';
 
 import theme from '../constants/theme';
-import TestScreen from '../screens/test/TestScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -54,23 +53,11 @@ const DrawerNavigator = () => {
                     headerTitle: 'Infinity Arhvisva'
                 }}
             />
-
-
             <Drawer.Screen
                 name="Profile"
                 component={ProfileScreen}
                 options={{
                     title: 'My Profile',
-                    headerLeft: () => <BackButton />
-                }}
-            />
-
-            {/* test screen */}
-            <Drawer.Screen
-                name="Test"
-                component={TestScreen}
-                options={{
-                    title: 'Test Screen',
                     headerLeft: () => <BackButton />
                 }}
             />
